@@ -51,7 +51,7 @@ class PersonFormatter {
               return firstAndLastNameString;
               break;
             default:
-            
+
               // implementation of default formatting
               return defaultFormattedString;
         }
@@ -67,7 +67,7 @@ class Person {
 }
 ```
 
-We could argue that this is still a **violation**, as the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with oneor more of the other principles: namely the **Dependency Inversion** principle and the **Interface Segragation Principle**.
+We could argue that this example still holds **violations** against **SOLID**, and that is true. As the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with oneor more of the other principles: namely the **Dependency Inversion** principle and the **Interface Segragation Principle**. But at least now we can change the implementation of the formatting of a Person without affecting the Person class itself - as the SRP states.
 
 ## Open/Closed Principle
 > Software entities (e.g. classes, modules, functions) should be open for extension but closed for modification.
