@@ -9,7 +9,64 @@
 > A class should only have only one reason to change.
 
 ### Violation example
+Class `Person` is responsible for holding person related data, it also holds has a function `Format` which outputs this person data to a given format. Currently this method accepts a parameter on which the function decides which algorithm to use return the data in the required format. 
+
+The example below **violates** the **single responsibility principle** because the class `Person` now is responsible for keeping data of of the person **and** formatting that data. 
+```
+class Person {
+    public string FirstName { get; set; }
+    public string LastName  { get; set; }
+    public Gender Gender { get; set; }
+    public DateTime DateOfBirth { get; set; }
+    public string Format(string formatType) {
+        switch(formatType) {
+            case "JSON":
+               // implement JSON formatting here
+               return jsonFormattedString;
+               break;
+            case "FirstAndLastName":
+              // implementation of first & lastname formatting here
+              return firstAndLastNameString;
+              break;
+            default:
+              // implementation of default formatting
+              return defaultFormattedString;
+        }
+    }
+}
+```
 ### How to fix?
+We can solve this by making sure that the class `Person` is only responsible for keeping the data and not responsible for formatting that data. Thus we will extract out the method `Format` and introduce another class that is responsible for formatting a book.
+
+```
+class PersonFormatter {
+    public string Format(Person person, string formatType) {
+        switch(formatType) {
+            case "JSON":
+               // implement JSON formatting here
+               return jsonFormattedString;
+               break;
+            case "FirstAndLastName":
+              // implementation of first & lastname formatting here
+              return firstAndLastNameString;
+              break;
+            default:
+              // implementation of default formatting
+              return defaultFormattedString;
+        }
+    }
+}
+```
+```
+class Person {
+    public string FirstName { get; set; }
+    public string LastName  { get; set; }
+    public Gender Gender { get; set; }
+    public DateTime DateOfBirth { get; set; }
+}
+```
+
+We could argue that this is still a **violation**, as the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with one of the other principles.
 
 ## Open/Closed Principle
 > Software entities (e.g. classes, modules, functions) should be open for extension but closed for modification.
