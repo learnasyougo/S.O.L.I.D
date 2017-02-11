@@ -36,25 +36,19 @@ class Person {
 }
 ```
 ### How to fix?
-We can solve this by making sure that the class `Person` is only responsible for keeping the data and not responsible for formatting that data. Thus we will extract out the method `Format` and introduce another class that is responsible for formatting a book.
+We can solve this by making sure that the class `Person` is only responsible for keeping the data and not responsible for formatting that data itself. Thus we will extract out the details of the method `Format` and introduce another class that is responsible for formatting a person.
 
 ```
-class PersonFormatter {
-    public string Format(Person person, string formatType) {
-        switch(formatType) {
-            case "JSON":
-               // implement JSON formatting here
-               return jsonFormattedString;
-               break;
-            case "FirstAndLastName":
-              // implementation of first & lastname formatting here
-              return firstAndLastNameString;
-              break;
-            default:
-
-              // implementation of default formatting
-              return defaultFormattedString;
-        }
+interface IFormatter {
+    string Format(Object @object);
+}
+```
+```
+class JSONFormatter : IFormatter {
+    public string Format(Object @object) {
+        // implement collecting object's public properties & values and formatting
+        // it in JSON afterwards
+        return jsonFormattedString;
     }
 }
 ```
@@ -64,10 +58,13 @@ class Person {
     public string LastName  { get; set; }
     public Gender Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
+    public string Format(IFormatter formatter) {
+        formatter.Format(this);
+    }
 }
 ```
 
-We could argue that this example still holds **violations** against **SOLID**, and that is true. As the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with oneor more of the other principles: namely the **Dependency Inversion** principle and the **Interface Segragation Principle**. But at least now we can change the implementation of the formatting of a Person without affecting the Person class itself - as the SRP states.
+We could argue that this example still holds **violations** against **SOLID**, and that is true. But at least now we can change the implementation of the formatting of a Person without affecting the Person class itself - as the SRP states.
 
 #### Resources & Links
 - https://code.tutsplus.com/tutorials/solid-part-1-the-single-responsibility-principle--net-36074
@@ -78,6 +75,8 @@ We could argue that this example still holds **violations** against **SOLID**, a
 > Software entities (e.g. classes, modules, functions) should be open for extension but closed for modification.
 
 ### Violation example
+Building on from the `PersonFormatter` class we introduced in the *how to fix* of the [Single Responsibility Principle](#how-to-fix) we see that if we'd want to introduce a a new format, we have to change the `PersonFormatter` class each time, as it will probably rely on different other classes to help serialize to either *json, xml, ...*. This clearly violates the *open/close*s
+
 ### How to fix?
 
 #### Resources & Links
