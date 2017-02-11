@@ -51,6 +51,7 @@ class PersonFormatter {
               return firstAndLastNameString;
               break;
             default:
+            
               // implementation of default formatting
               return defaultFormattedString;
         }
@@ -66,7 +67,7 @@ class Person {
 }
 ```
 
-We could argue that this is still a **violation**, as the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with one of the other principles.
+We could argue that this is still a **violation**, as the `format` method itself still holds too much responsabilities as it has to implements too much details on how it is being formatted. We'll solve this later one with oneor more of the other principles: namely the **Dependency Inversion** principle and the **Interface Segragation Principle**.
 
 ## Open/Closed Principle
 > Software entities (e.g. classes, modules, functions) should be open for extension but closed for modification.
