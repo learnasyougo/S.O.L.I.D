@@ -386,10 +386,83 @@ public class ViewClient {
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
 
 ## Dependency Inversion Principle
-> High-level modules should not depend on low-level modules, both should depend on abstractions. Abstractions should not depend on details, details should depend on abstractions.
+> High-level modules should not depend on low-level modules, both should *depend* on abstractions. Abstractions should not *depend* on details, details should depend on abstractions.
+- Class constructors, or (public/proteced) methods, should require any dependencies. And let you know what they need to do it's work.
+
+- **Dependencies** we talk about here are for example the **new** keyboard (creating instances), static methods, third party libraries, database(s), file system, configuration, ftp, web services, system resources etc.. Thus some violations could be:
+  - High level modules usually call low level modules, and thus mostly tend to *instantiate* them (using the **new** keyword) - not what we want. 
+  - Static methods for example used as `Façade` layers.
 
 ### Violation example
+In the `PersonRepository` class we made above we have a default empty constructor and in our methods we just assume the use of given `DbContext` by instantiating a new object of it every time. This not only violates the `Dependency Inversion principle`, but also the `Single Responsibility principle` (it is responsible for creating new `DbContext` instances) as well as the `Open/Closed principle` (when we want to change `DbContext` to another implementation, we have to digg in and **modify** the class, not what we want).
+
+```
+public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepository {
+    public void Save(Person person) {
+        using(var db = new DbContext()) {
+            return db.People.Add(person);
+        }
+    }
+    public void Save(IEnumerable<Person> people) {
+        using(var db = new DbContext()) {
+            return db.People.AddRange(people);
+        }
+    }
+    public Person Get(int id) {
+        using(var db = new DbContext()) {
+            return db.People.GetById(id);
+        }
+    }
+    public IEnumerable<Person> Get() {
+        using(var db = new DbContext()) {
+            return db.People.ToEnumerable();
+        }
+    }
+    public IEnumerable<Person> Get(Func<Person, bool> predicate) {
+        using(var db = new DbContext()) {
+            return db.People.Where(p => predicate(p)).ToEnumerable();
+        }        
+    }
+}
+```
+
+Other **code smells**
+- using the **new** keyword, creating new instances
+- use of static methods or properties, e.g.: ´DateTime.Now´ implemented in your method in stead of the method accepting a `DateTime` object and then using that one.
+
 ### How to fix?
+By introducting a constructor with a parameter `IDbContext`. Now when using PersonRepository, the class is honest about it's dependency to `IDbContext`.
+
+```
+public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepository {
+    private readonly _db;
+
+    public PersonRepository(IDbContext db) {
+        _db = db;
+    }
+
+    public void Save(Person person) {
+        _db.People.Add(person);        
+    }
+    public void Save(IEnumerable<Person> people) {
+        _db.People.AddRange(people);        
+    }
+    public Person Get(int id) {
+        _db.People.GetById(id);        
+    }
+    public IEnumerable<Person> Get() {
+        _db.People.ToEnumerable();        
+    }
+    public IEnumerable<Person> Get(Func<Person, bool> predicate) {
+        _db.People.Where(p => predicate(p)).ToEnumerable();                
+    }
+}
+```
+
+**But where do I instantiate PersonRepository etc... when I can't use new?**
+- a default constructor (poor man's *Inversion of Control*)
+- main method where you instantiate those
+- use an *Inversion of Control* container / framework
 
 #### Resources & Links
 - http://www.oodesign.com/dependency-inversion-principle.html
