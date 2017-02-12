@@ -7,64 +7,17 @@
 
 ## Single Responsibility Principle
 > A class should only have only one reason to change.
+- It relates strongly to cohesion and coupling: strive for high *cohesion*, but for low *coupling*.
+- More responsibilities in a module makes it more likely to change.
+- The more modules a change affects, the more likely the change will introduce an error.
+- Therefore, *a class should only have one reason to change* and *correspond to have one single responsibility*.
+
+*Cohesion*: how strongly-related and focused are the various elements of a module (class, function, namespace...)
+*Coupling*: the degree to which each module relies on each on of the other modules.
 
 ### Violation example
-Class `Person` is responsible for holding person related data, it also holds has a function `Format` which outputs this person data to a given format. Currently this method accepts a parameter on which the function decides which algorithm to use return the data in the required format. 
 
-The example below **violates** the **single responsibility principle** because the class `Person` now is responsible for keeping data of of the person **and** formatting that data. 
-```
-class Person {
-    public string FirstName { get; set; }
-    public string LastName  { get; set; }
-    public Gender Gender { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public string Format(string formatType) {
-        switch(formatType) {
-            case "JSON":
-               // implement JSON formatting here
-               return jsonFormattedString;
-               break;
-            case "FirstAndLastName":
-              // implementation of first & lastname formatting here
-              return firstAndLastNameString;
-              break;
-            default:
-              // implementation of default formatting
-              return defaultFormattedString;
-        }
-    }
-}
-```
 ### How to fix?
-We can solve this by making sure that the class `Person` is only responsible for keeping the data and not responsible for formatting that data itself. Thus we will extract out the details of the method `Format` and introduce another class that is responsible for formatting a person.
-
-```
-interface IFormatter {
-    string Format(Object @object);
-}
-```
-```
-class JSONFormatter : IFormatter {
-    public string Format(Object @object) {
-        // implement collecting object's public properties & values and formatting
-        // it in JSON afterwards
-        return jsonFormattedString;
-    }
-}
-```
-```
-class Person {
-    public string FirstName { get; set; }
-    public string LastName  { get; set; }
-    public Gender Gender { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public string Format(IFormatter formatter) {
-        formatter.Format(this);
-    }
-}
-```
-
-We could argue that this example still holds **violations** against **SOLID**, and that is true. But at least now we can change the implementation of the formatting of a Person without affecting the Person class itself - as the SRP states.
 
 #### Resources & Links
 - https://code.tutsplus.com/tutorials/solid-part-1-the-single-responsibility-principle--net-36074
