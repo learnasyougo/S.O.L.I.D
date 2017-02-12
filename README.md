@@ -271,9 +271,115 @@ We coud abstract that further away too ofcourse, but in my opinion **pragmatism*
 - Prefer small cohesive interfaces, to large bulky interfaces.
 
 ### Violation example
-In a way we described this before 
+Usually when you have large and bulky interfaces, for example here's an interface for a list of people and an implementation of it that's only interested in reading, as it's used on for example the frontend of an information display.
+
+```
+public interface IPersonRepository {
+    void Save(Person person);
+    void Save(IEnumerable<Person> people);
+    Person Get(int id);
+    IEnumerable<Person> Get();
+    IEnumerable<Person> Get(Func<Person, bool> predicate);
+}
+
+public class PersonReadOnlyRepository : IPersonRepository {
+    public void Save(Person person) {
+        throw NotImplementedException();
+    }
+    public void Save(IEnumerable<Person> people) {
+        throw NotImplementedException();
+    }
+    public Person Get(int id) {
+        throw NotImplementedException();
+    }
+    public IEnumerable<Person> Get() {
+        using(var db = new DbContext()) {
+            return db.People.ToEnumerable();
+        }
+    }
+    public IEnumerable<Person> Get(Func<Person, bool> predicate) {
+        using(var db = new DbContext()) {
+            return db.People.Where(p => predicate(p)).ToEnumerable();
+        }        
+    }
+}
+```
+
+The methods we're not interested in are now throwing the `NotImplementedException` - which in it's turn violates the **Liskov Subsition Principle**. Thus, we have a problem at hand.
 
 ### How to fix?
+Seperate a larger bulky interface into smaller interfaces.
+
+```
+public interface IWriteablePersonRepository {
+    void Save(Person person);
+    void Save(IEnumerable<Person> people);
+}
+
+public interface IReadablePersonRepository {
+    Person Get(int id);
+    IEnumerable<Person> Get();
+    IEnumerable<Person> Get(Func<Person, bool> predicate);
+}
+
+public class PersonReadOnlyRepository : IReadablePersonRepository {
+    public Person Get(int id) {
+        using(var db = new DbContext()) {
+            return db.People.GetById(id);
+        }
+    }
+    public IEnumerable<Person> Get() {
+        using(var db = new DbContext()) {
+            return db.People.ToEnumerable();
+        }
+    }
+    public IEnumerable<Person> Get(Func<Person, bool> predicate) {
+        using(var db = new DbContext()) {
+            return db.People.Where(p => predicate(p)).ToEnumerable();
+        }        
+    }
+}
+```
+
+As long as you keep interfaces small enough, you can easily expose larger implementations to the client, but with a limited interface. In the example above we created a special `PersonReadOnlyRepository`, but consider the example below. There we make a full blown `PersonRepository` which implements both `IWriteablePersonRepository` and `IReadablePersonRepository`. When passing the object to the `ViewClient` class's constructor, the argument expected there is an IReadablePersonRepository - thus, limiting the functionality in the `ViewClient`.
+
+```
+public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepository {
+    public void Save(Person person) {
+        using(var db = new DbContext()) {
+            return db.People.Add(person);
+        }
+    }
+    public void Save(IEnumerable<Person> people) {
+        using(var db = new DbContext()) {
+            return db.People.AddRange(people);
+        }
+    }
+    public Person Get(int id) {
+        using(var db = new DbContext()) {
+            return db.People.GetById(id);
+        }
+    }
+    public IEnumerable<Person> Get() {
+        using(var db = new DbContext()) {
+            return db.People.ToEnumerable();
+        }
+    }
+    public IEnumerable<Person> Get(Func<Person, bool> predicate) {
+        using(var db = new DbContext()) {
+            return db.People.Where(p => predicate(p)).ToEnumerable();
+        }        
+    }
+}
+
+public class ViewClient {
+    private readonly _personRepository;
+
+    public ViewClient(IReadablePersonRepository personRepository) {
+        _personRepository = personRepository;
+    }
+}
+```
 
 #### Resources & Links
 - http://www.oodesign.com/interface-segregation-principle.html
