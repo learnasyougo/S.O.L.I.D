@@ -471,6 +471,16 @@ public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepos
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
 
 ## Don't Repeat Yourself (DRY)
+> Every piece of knowledge must have a single, unambiguous, authorative representation within a system.
+- In code
+- In process
+- In documentation
+
+### Violations
+Repetition in code, aka "*WET*", as in "*write everything twice*" or "*waste everyone's time*".
+- Magic string
+- Duplicated logic
+- Repeated if/then
 
 #### Resources & Links
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
