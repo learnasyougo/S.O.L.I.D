@@ -202,6 +202,50 @@ public class ExcelPersonFormatter : IPersonFormatter<object> {
 ```
 
 ### How to fix?
+One possible change, there could be other solutions, would be to make a more reliable return value for the `Format` method. So that `IPersonFormatter`'s `Format` method always returns a `stream` (or another in memory form) of the data. We will also omit the location of the `Format` method, because it actually had nothing to do (considering the **single responsibility principle*) with formatting a Person.
+
+```
+IPersonFormatter {
+    Stream Format(Person person);
+}
+```
+
+```
+public class XMLPersonFormatter : IPersonFormatter {
+    public string Format(Person person) {
+        // ignoring location and executing xml formatting logic
+        // saving it to a MemoryStream when working in .NET for example
+        return xmlStringMemoryStream;
+    }
+}
+
+public class ExcelPersonFormatter : IPersonFormatter {
+    public object Format(Person person) {
+        // excel specific rendering and saving to location here        
+        excel.Save(location);
+        // we now don't return null, but a MemoryStream we don't have anything to return...
+        return excelWorkBookMemoryStream;
+    }
+}
+```
+
+As now all implementations of `IPersonFormatter` return a predicatable `Stream` object, we can change the design of the `PersonExporter` class so that it handles the streams based on a given location. 
+
+```
+public class PersonExporter {
+    public Stream Export(Person person, IPersonFormatter formatter, string? location) {        
+        var stream = formatter.Format(person);
+        if(location.HasValue) {
+            // Handle saving the stream to given location/file            
+        }
+        // we return the stream - even if we already saved it
+        return stream;
+    }
+}
+```
+
+This is already better, because we always return a stream, even in the `PersonExporter` `Export` method - but depending on the use case and design philosophy still feels a little funky as we're still stuck with the `location` parameter that handles saving a stream for us...
+We coud abstract that further away too ofcourse, but in my opinion **pragmatism** comes into play here. How far do you abstract away? Is it a core design problem? Can we refactor later in the process? So for now we'll leave it here.
 
 #### Resources & Links
 - http://www.oodesign.com/liskov-s-substitution-principle.html
