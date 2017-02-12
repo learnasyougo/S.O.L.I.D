@@ -5,6 +5,8 @@
  - [Interface Segregation Principle](#interface-segragation-principle)
  - [Dependency Inversion Principle](#dependency-inversion-principle)
 
+ *Note: The violation & solution examples given build from top to bottom, they improve the code and design step by step/principle by principle.*
+
 ## Single Responsibility Principle
 > A class should only have only one reason to change.
 - It relates strongly to cohesion and coupling: strive for high *cohesion*, but for low *coupling*.
@@ -12,7 +14,7 @@
 - The more modules a change affects, the more likely the change will introduce an error.
 - Therefore, *a class should only have one reason to change* and *correspond to have one single responsibility*.
 
-*Cohesion*: how strongly-related and focused are the various elements of a module (class, function, namespace...)
+*Cohesion*: how strongly-related and focused are the various elements of a module (class, function, namespace...)<br/>
 *Coupling*: the degree to which each module relies on each on of the other modules.
 
 ### Violation example
