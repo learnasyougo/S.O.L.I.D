@@ -244,8 +244,23 @@ public class PersonExporter {
 }
 ```
 
+Imagine some class or controller/api using this.
+```
+public class SomeController {
+    public void ExportUsers() {
+        var personExporter = new PersonExporter();
+        var personFormatter = new JSONPersonFormatter();
+        foreach(var person in _personRepository.GetUsers()) {
+            var stream = personExporter.Export(person, personFormatter);
+            // decided what to do with the returned stream depending on your requirements
+            // save it to a list and return or do sth else
+        }        
+    }
+}
+```
+
 This is already better, because we always return a stream, even in the `PersonExporter` `Export` method - but depending on the use case and design philosophy still feels a little funky as we're still stuck with the `location` parameter that handles saving a stream for us...
-We coud abstract that further away too ofcourse, but in my opinion **pragmatism** comes into play here. How far do you abstract away? Is it a core design problem? Can we refactor later in the process? So for now we'll leave it here.
+We coud abstract that further away too ofcourse, but in my opinion **pragmatism** comes into play here. How far do you abstract away? Is it a core design problem? Can we refactor later on in the process? So you could leave it here, although I would omit the location as it probably would be better to seperate it to a dedicated seperated module that handles saving streams to file. But that would probably lead us to far from the topic at hand here.
 
 #### Resources & Links
 - http://www.oodesign.com/liskov-s-substitution-principle.html
@@ -253,8 +268,11 @@ We coud abstract that further away too ofcourse, but in my opinion **pragmatism*
 
 ## Interface Segregation Principle
 > No client should be forced to depend on methods it does not use, implicitely implying that a client should never be forced to implement an interface it doesn't use.
+- Prefer small cohesive interfaces, to large bulky interfaces.
 
 ### Violation example
+In a way we described this before 
+
 ### How to fix?
 
 #### Resources & Links
