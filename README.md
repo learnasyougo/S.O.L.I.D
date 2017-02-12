@@ -133,14 +133,6 @@ interface IPersonFormatter<TReturnValue> {
     TReturnValue Format(Person person, string? location);
 }
 
-public class ExcelPersonFormatter : IPersonFormatter<bool> {
-    public string Format(Person person, string? location) {
-        // excel specific rendering and saving to location here
-        // we return the boolean value returned by the "Save" method on the excel API.
-        return excel.Save(location);                
-    }
-}
-
 public class JSONPersonFormatter : IPersonFormatter<string> {
     public string Format(Person person, string? location) {
         // ignoring location and executing json formatting logic
@@ -154,6 +146,15 @@ public class XMLPersonFormatter : IPersonFormatter<string> {
         return xmlString;
     }
 }
+
+public class ExcelPersonFormatter : IPersonFormatter<object> {
+    public object Format(Person person, string? location) {
+        // excel specific rendering and saving to location here        
+        excel.Save(location);
+        // we return null, as we don't have anything to return...
+        return null;
+    }
+}
 ```
 
 ```
@@ -164,7 +165,7 @@ public class PersonExporter {
 }
 ```
 
-This way we can now add new formats and implementations without having to change the inner workings of the `PersonExporter` class.
+This way we can now add new formats and implementations without having to change the inner workings of the `PersonExporter` class. There are still some flaws in the design, and we will improve on them later on with use of the other principles.
 
 #### Resources & Links
 - http://www.oodesign.com/open-close-principle.html
@@ -172,8 +173,34 @@ This way we can now add new formats and implementations without having to change
 
 ## Liskov Substitution Principle
 > In a computer program, if type *B* is a subtype of type *A* then objects of type *A* may be replaced with objects of type *B* without altering any of the desirable properties of type *A*. In essence it means that every subclass should be substitutable for their base class. 
+- If it looks like a duck, quacks like a duck and walks like a duck, it's probably a duck;
+  - unless the the other duck either needs batteries - then it's probably not the right abstractions
+  - or unless the other duck sometimes relies on other ducks to fly, or flies on it'sown - then it's probably not the right abstraction as well
+    - *will refer to this again in the "Violation Example" of our IPersonFormatter design*
+- Child classes must not remove base class behaviour, nor violate base class invariants.
+- Code using the abstractions should not know they are different from their base types.
 
 ### Violation example
+The `IPersonFormatter` and in general the `Export` method on the `PersonExporter` class violate this principle as the calling code has to be aware whether or not a result will be returned. In the case of our JSON and XML formatters a string is returned, but in the EXCEL formatter *null*/nothing is returned... This is confusing, and certainly makes it that even if it does *quack, walk and looks like a duck* it certainly *doesn't fly like a duck*...
+
+```
+public class XMLPersonFormatter : IPersonFormatter<string> {
+    public string Format(Person person, string? location) {
+        // ignoring location and executing xml formatting logic
+        return xmlString;
+    }
+}
+
+public class ExcelPersonFormatter : IPersonFormatter<object> {
+    public object Format(Person person, string? location) {
+        // excel specific rendering and saving to location here        
+        excel.Save(location);
+        // we return null, as we don't have anything to return...
+        return null;
+    }
+}
+```
+
 ### How to fix?
 
 #### Resources & Links
