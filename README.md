@@ -478,9 +478,19 @@ public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepos
 
 ### Violations
 Repetition in code, aka "*WET*", as in "*write everything twice*" or "*waste everyone's time*".
-- Magic string
-- Duplicated logic
-- Repeated if/then
+
+#### Magic strings & numbers
+- E.g. 
+  - a connection string 
+    - store the value in a config file for example
+    - make sure that you make it a class level variable    
+    - and maybe/optionally accept it in the constructor and use dependency inversion
+  - "*magic numbers*" => such as in if-conditions (`if(a > 1) { }`)
+    - make sure to use refactoring to extract methods
+    - adapt the magic numbers to parameters or varibales e.g. a > list.Count()
+    - maybe make a local field and use the field in the highest scope as possible
+    
+etc...
 
 #### Resources & Links
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
