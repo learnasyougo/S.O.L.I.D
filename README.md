@@ -389,9 +389,9 @@ public class ViewClient {
 > High-level modules should not depend on low-level modules, both should *depend* on abstractions. Abstractions should not *depend* on details, details should depend on abstractions.
 - Class constructors, or (public/proteced) methods, should require any dependencies. And let you know what they need to do it's work.
 
-- **Dependencies** we talk about here are for example the **new** keyboard (creating instances), static methods, third party libraries, database(s), file system, configuration, ftp, web services, system resources etc.. Thus some violations could be:
-  - High level modules usually call low level modules, and thus mostly tend to *instantiate* them (using the **new** keyword) - not what we want. 
-  - Static methods for example used as `Façade` layers.
+The **dependencies** we talk about here are for example the **new** keyboard (creating instances), static methods, third party libraries, database(s), file system, configuration, ftp, web services, system resources etc.. Thus some violations could be:
+- High level modules usually call low level modules, and thus mostly tend to *instantiate* them (using the **new** keyword) - not what we want. 
+- Static methods for example used as `Façade` layers.
 
 ### Violation example
 In the `PersonRepository` class we made above we have a default empty constructor and in our methods we just assume the use of given `DbContext` by instantiating a new object of it every time. This not only violates the `Dependency Inversion principle`, but also the `Single Responsibility principle` (it is responsible for creating new `DbContext` instances) as well as the `Open/Closed principle` (when we want to change `DbContext` to another implementation, we have to digg in and **modify** the class, not what we want).
