@@ -18,7 +18,7 @@
 ### Violation example
 In this demonstration we have a Person class holding a `FirstName`, `LastName`, `DateOfBirth` and `Gender`. There's also a method `Export` that will save the person's details depending on the 'format' and 'location' parameters. This method was introduced, because the business required person details to be able to be exported say to Excel, JSON (for a webservice being implemented), etc...
 
-´´´
+```
 public class Person {
     public string FirstName { get; set; }
     public string LastName { get; set; }    
@@ -40,7 +40,8 @@ public class Person {
         }
     }
 }
-´´´
+```
+
 #### Why it looks ugly
 One of the first things we can see is that the class `Person` is responsible for exporting it's data to another format, this is a clear **violation of the Single Responsibility principle**. Say the API of Excel changes, one will need to go into the `Person` object and change the `Export` method logic of Excel changes, one would have to go into the `Export` method and change the details of the implementation. That change will most likely affect any class depending on the `Person` object.
 
