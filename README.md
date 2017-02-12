@@ -96,7 +96,7 @@ Building on from the `PersonExporter` class we introduced in the [*how to fix* o
 
 ```
 public class PersonExporter {
-    public object Export(string format, string? location = null) {
+    public object Export(Person person, string format, string? location = null) {
         switch(format) {
             case "Excel":
                 // excel specific rendering and saving to location here
@@ -121,15 +121,45 @@ public class PersonExporter {
 Every time we want to introduce a new format, a change to the `PersonExporter` is required. This clearly violates the *open/closed* principle as it requires us to change an existing function to add new behaviour.
 
 ### How to fix?
-The best way to change behaviour/add new functionaly without changing preexisting code is to rely on abstractions. Here we will extract out the
+A way to change behaviour/add new functionaly without changing preexisting code is to rely on abstractions. Here we will make an interface called `IPersonFormatter` and introduce that to the `Export` method as parameter. Each class inheriting from `IPersonFormatter` (e.g. `JSONPersonFormatter`, `XMLPersonFormatter`...) will then implement it's own logic in the `Format` method.
+
 ```
-public class PersonExporter {
-    public object Export(IPersonFormatter formatter, string? location) {
-        formatter.Location = location;
-        return formatter.Format();
+interface IPersonFormatter<TReturnValue> {
+    TReturnValue Format(Person person, string? location);
+}
+
+public class ExcelPersonFormatter : IPersonFormatter<bool> {
+    public string Format(Person person, string? location) {
+        // excel specific rendering and saving to location here
+        // we return the boolean value returned by the "Save" method on the excel API.
+        return excel.Save(location);                
+    }
+}
+
+public class JSONPersonFormatter : IPersonFormatter<string> {
+    public string Format(Person person, string? location) {
+        // ignoring location and executing json formatting logic
+        return jsonString;
+    }
+}
+
+public class XMLPersonFormatter : IPersonFormatter<string> {
+    public string Format(Person person, string? location) {
+        // ignoring location and executing xml formatting logic
+        return xmlString;
     }
 }
 ```
+
+```
+public class PersonExporter {
+    public object Export(Person person, IPersonFormatter formatter, string? location) {        
+        return formatter.Format(person, location);
+    }
+}
+```
+
+This way we can now add new formats and implementations without having to change the inner workings of the `PersonExporter` class.
 
 #### Resources & Links
 - http://www.oodesign.com/open-close-principle.html
