@@ -4,6 +4,8 @@
  - [Liskov Substitution Principle](#liskov-substitution-principle)
  - [Interface Segregation Principle](#interface-segragation-principle)
  - [Dependency Inversion Principle](#dependency-inversion-principle)
+ - [Don't Repeat Yourself (DRY)](#dont-repeat-yourself-dry)
+
 
  *Note: The violation & solution examples given build from top to bottom, they improve the code and design step by step/principle by principle.*
 
@@ -467,3 +469,9 @@ public class PersonRepository : IReadablePersonRepository, IWriteablePersonRepos
 #### Resources & Links
 - http://www.oodesign.com/dependency-inversion-principle.html
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
+
+## Don't Repeat Yourself (DRY)
+
+#### Resources & Links
+- https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
+- https://en.wikipedia.org/wiki/Don't_repeat_yourself
