@@ -17,6 +17,7 @@
 
 ### Violation example
 In this demonstration we have a Person class holding a `FirstName`, `LastName`, `DateOfBirth` and `Gender`. There's also a method `Export` that will save the person's details depending on the 'format' and 'location' parameters. This method was introduced, because the business required person details to be able to be exported say to Excel, JSON (for a webservice being implemented), etc...
+
 ´´´
 public class Person {
     public string FirstName { get; set; }
@@ -47,6 +48,7 @@ Clearly there are also more things that  "*look ugly*", but we're focusing on th
 
 ### How to fix?
 First, we will extract the responsibility of exporting (aka the `Export` method) out of the `Person` class by introducing a `PersonExporter` class.
+
 ```
 public class Person {
     public string FirstName { get; set; }
