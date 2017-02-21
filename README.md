@@ -496,5 +496,6 @@ etc...
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
 - https://en.wikipedia.org/wiki/Don't_repeat_yourself
 
-# Watch
+# Watch "Refactoring to a S.O.L.I.D. Foundation", Steve Bohlen
 https://www.youtube.com/watch?v=huEEkx5P5Hs
+<iframe width="853" height="480" src="https://www.youtube.com/embed/huEEkx5P5Hs" frameborder="0" allowfullscreen></iframe>
