@@ -495,3 +495,6 @@ etc...
 #### Resources & Links
 - https://app.pluralsight.com/library/courses/principles-oo-design/table-of-contents
 - https://en.wikipedia.org/wiki/Don't_repeat_yourself
+
+# Watch
+https://www.youtube.com/watch?v=huEEkx5P5Hs
